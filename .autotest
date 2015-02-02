@@ -1,0 +1,20 @@
+require "autotest/bundler"
+require "autotest/restart"
+
+Autotest.add_hook :initialize do |autotest|
+  %w{.git ._* vendor tmp log doc output}.each do |exception|
+    autotest.add_exception(exception)
+  end
+end
+
+CLEAR = "\e[2J\e[f"
+LINE  = "\n"*2 + '-'*80 + "\n"*2
+
+##
+#  # From autotest/growl
+#    # Set the label and clear the terminal.
+Autotest.add_hook :run_command do
+  print LINE
+  print CLEAR 
+  false
+end
