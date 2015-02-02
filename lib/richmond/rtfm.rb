@@ -9,11 +9,11 @@ module Richmond
     end
 
     def scan(dir)
-      
+
       input = Hash.new {|hash, key| hash[key] = [] }
       output = Hash.new {|hash, key| hash[key] = [] }
 
-      files = Find.find(dir).select{|f| f.match(/.rb$/i) }
+      files = Find.find(dir).to_a.reject!{|f| File.directory? f }
       files.each do |file|
         input_filename = File.expand_path(file)
         output_filename = default_output_filename dir
@@ -33,7 +33,7 @@ module Richmond
             else
               output_filename = default_output_filename dir
             end
-          
+            output_filename = File.expand_path output_filename 
           elsif line.match(/^\=end/i)
             mode = :paused
           elsif mode == :recording
