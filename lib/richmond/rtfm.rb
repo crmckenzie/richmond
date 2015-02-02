@@ -8,7 +8,7 @@ module Richmond
       File.join(dir,'output', 'richmond.output')
     end
 
-    def rtfm(dir)
+    def scan(dir)
       
       input = Hash.new {|hash, key| hash[key] = [] }
       output = Hash.new {|hash, key| hash[key] = [] }
@@ -54,11 +54,10 @@ module Richmond
       input.each_pair do |filename, lines|
         dirname = File.dirname(filename)
         unless File.directory?(dirname)
-            FileUtils.mkdir_p(dirname)
+          FileUtils.mkdir_p(dirname)
         end
 
         File.open(filename, 'w') do |file|
-          puts "writing #{lines.size} lines to #{filename}"
           lines.each {|line| file.write "#{line}\n" }
         end
       end
