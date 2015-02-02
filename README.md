@@ -1,6 +1,6 @@
 # Richmond
 
-TODO: Write a gem description
+Richmond is a solution for culling documentation from files in a repo.
 
 ## Installation
 
@@ -20,7 +20,18 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+    Richmond.generate dir
+
+This command will cause Richmond to scan all files in dir, recursively.
+The tool looks for ruby comment blocks in the following format:
+
+    =begin richmond [output-file: <output file name>]
+      some text
+    =end
+
+Richmond will take any text in the block and insert it into the specified output file.
+
+The default output filename of 'output/richmond.output' will be used if the output-file is not specified in the block.
 
 ## Contributing
 
