@@ -8,8 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Richmond::VERSION
   spec.authors       = ["crmckenzie"]
   spec.email         = ["crmckenzie@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{scrap files for content and emit an aggregate file}
   spec.homepage      = ""
   spec.license       = "MIT"
 
