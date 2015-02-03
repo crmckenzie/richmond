@@ -11,6 +11,13 @@ describe Richmond::RTFM do
   subject {
     Richmond::RTFM.new 
   }
+  
+  describe '.parse_output_file' do
+    it 'pulls the output-file out of the start line' do
+      line = '=begin richmond output-file: output/testfile.output'
+      expect(subject.parse_output_file line).to eq 'output/testfile.output'
+    end
+  end
 
   describe '.rtfm' do
     let! (:result) { subject.scan dir }
@@ -54,6 +61,7 @@ this:
       end
 
     end
+
 
     describe 'comment blocks with identified output files' do
 =begin richmond output-file: output/file1.txt

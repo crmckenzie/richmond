@@ -1,4 +1,6 @@
 require "richmond/version"
+require 'richmond/logging'
+require 'richmond/scan_result'
 require 'richmond/rtfm'
 
 module Richmond
