@@ -48,8 +48,8 @@ this:
           expect(result.output).to have_key(default_filename) 
 
           lines = result.output[default_filename]
-          expect(lines.first).to eq 'this:'
-          expect(lines.last).to eq '  this line should appear in the default output file'
+          expect(lines.first).to eq "this:\n"
+          expect(lines.last).to eq "  - array item 2\n" 
         end
       end
 
@@ -64,12 +64,12 @@ this:
   file 2 comments
 =end
 
-=begin richmond
-  this line should appear in the default output file
-=end
-
 =begin richmond output-file: output/file1.txt
   some more file 1 comments
+=end
+
+=begin richmond
+  this line should appear in the output/file1.txt
 =end
 
       it "should have keys for file1.txt and file2.txt" do
@@ -78,12 +78,13 @@ this:
       end
 
       it 'should have 1 line for file 2' do
-        expect(result.output['output/file2.txt']).to include '  file 2 comments'
+        expect(result.output['output/file2.txt']).to include "  file 2 comments\n"
       end
 
-      it 'should merge file 1 lines from both comment blocks' do
-        expect(result.output['output/file1.txt']).to include('  file 1 comments')
-        expect(result.output['output/file1.txt']).to include('  some more file 1 comments')
+      it 'should merge file 1 lines from all relevant comment blocks' do
+        expect(result.output['output/file1.txt']).to include("  file 1 comments\n")
+        expect(result.output['output/file1.txt']).to include("  some more file 1 comments\n")
+        expect(result.output['output/file1.txt']).to include("  this line should appear in the output/file1.txt\n")
       end
 
     end
