@@ -2,6 +2,26 @@
 
 Richmond is a solution for culling documentation from files in a repo.
 
+## What's it for?
+
+I was not happy with existing solutions for generating swagger documentation
+from ruby code. For this reason I started hand-editing the swagger JSON files.
+This became tedious over time, and I decided that editing the files in YAML
+would be nicer. This solution worked well, but still required a lot of context-
+switching between the YAML files and the api implementation. I wrote richmond
+so that I could do this:
+
+    =begin output-file: swagger.yaml
+      api: /my/url/{param1}
+        parameters
+        - name: param1
+      ... snipped for brevity
+    =end
+    get '/my/url/:param1' do
+      param1 = params[:param1]
+      ... snipped for brevity
+    end
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -39,7 +59,7 @@ Richmond will take any text in the block and insert it into the specified output
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/richmond/fork )
+1. Fork it ( https://github.com/crmckenzie/richmond/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
