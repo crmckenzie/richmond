@@ -15,8 +15,33 @@ describe Richmond::RTFM do
   describe '.parse_output_file' do
     it 'pulls the output-file out of the start line' do
       line = '=begin richmond output-file: output/testfile.output'
-      expect(subject.parse_output_file line).to eq 'output/testfile.output'
+      expect(subject.parse_output_file line).to eq File.expand_path('output/testfile.output')
     end
+  end
+
+  describe '.begin_recording?' do
+
+    it "standard form" do
+      line = '=begin output-file: output/testfile.output'
+      expect(subject.begin_recording? line).to eq true 
+    end
+    
+    it 'append' do
+      expect(subject.begin_recording? '=begin append').to eq true
+    end
+
+    it 'rejects nil' do
+      expect(subject.begin_recording? nil).to eq false
+    end
+
+    it 'rejects gobbledygook' do
+      expect(subject.begin_recording? 'gobbledygook').to eq false
+    end
+
+    it 'rejects standard comment block' do
+      expect(subject.begin_recording? '=begin').to eq false
+    end
+
   end
 
   describe '.rtfm' do
@@ -24,7 +49,7 @@ describe Richmond::RTFM do
 
     describe 'simple comment block' do
 
-=begin richmond 
+=begin output-file: output/richmond.output 
 this:
   is: some
   yaml:
@@ -37,7 +62,6 @@ this:
       end
 
       describe 'input' do
-
         it 'contains a key for the file' do
           filename = File.expand_path __FILE__
           expect(result.input).to have_key(filename)
@@ -50,9 +74,10 @@ this:
       end
 
       describe 'output' do
-        it 'has default output filename' do
+        it 'has output filename' do
+
           default_filename = File.join(File.dirname(File.expand_path('../../', __FILE__)), 'output', 'richmond.output')
-          expect(result.output).to have_key(default_filename) 
+          expect(result.output).to have_key(default_filename), result.output.keys 
 
           lines = result.output[default_filename]
           expect(lines.first).to eq "this:\n"
@@ -62,37 +87,36 @@ this:
 
     end
 
-
     describe 'comment blocks with identified output files' do
-=begin richmond output-file: output/file1.txt
+=begin output-file: output/file1.txt
   file 1 comments
 =end
 
-=begin richmond output-file: output/file2.txt
+=begin output-file: output/file2.txt
   file 2 comments
 =end
 
-=begin richmond output-file: output/file1.txt
+=begin output-file: output/file1.txt
   some more file 1 comments
 =end
 
-=begin richmond
+=begin append 
   this line should appear in the output/file1.txt
 =end
 
       it "should have keys for file1.txt and file2.txt" do
-        expect(result.output).to have_key('output/file1.txt')
-        expect(result.output).to have_key('output/file2.txt')
+        expect(result.output).to have_key(File.expand_path 'output/file1.txt')
+        expect(result.output).to have_key(File.expand_path 'output/file2.txt')
       end
 
       it 'should have 1 line for file 2' do
-        expect(result.output['output/file2.txt']).to include "  file 2 comments\n"
+        expect(result.output[File.expand_path 'output/file2.txt']).to include "  file 2 comments\n"
       end
 
       it 'should merge file 1 lines from all relevant comment blocks' do
-        expect(result.output['output/file1.txt']).to include("  file 1 comments\n")
-        expect(result.output['output/file1.txt']).to include("  some more file 1 comments\n")
-        expect(result.output['output/file1.txt']).to include("  this line should appear in the output/file1.txt\n")
+        expect(result.output[File.expand_path 'output/file1.txt']).to include("  file 1 comments\n")
+        expect(result.output[File.expand_path 'output/file1.txt']).to include("  some more file 1 comments\n")
+        expect(result.output[File.expand_path 'output/file1.txt']).to include("  this line should appear in the output/file1.txt\n")
       end
 
     end

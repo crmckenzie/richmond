@@ -25,13 +25,17 @@ Or install it yourself as:
 This command will cause Richmond to scan all files in dir, recursively.
 The tool looks for ruby comment blocks in the following format:
 
-    =begin richmond [output-file: <output file name>]
+    =begin output-file: <output file name>
       some text
     =end
 
-Richmond will take any text in the block and insert it into the specified output file.
+Successive blocks targeting the same output file can be written as follows:
 
-The default output filename of 'output/richmond.output' will be used if the output-file is not specified in the block.
+    =begin append
+      some more text
+    =end
+
+Richmond will take any text in the block and insert it into the specified output file.
 
 ## Contributing
 
