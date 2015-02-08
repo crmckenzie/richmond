@@ -36,9 +36,8 @@ module Richmond
       @result = ScanResult.new
 
       files.each do |file|
-        @input_filename = File.expand_path file
-        lines = File.readlines file
-        lines.each do |line|
+        @the_name_of_the_file_being_read = File.expand_path file
+        File.readlines(file).each do |line|
           begin
             stop_recording! line if stop_recording? line
             record! line if recording?
@@ -99,7 +98,7 @@ module Richmond
 
     def record! line
       @result.output[@output_filename].push line 
-      @result.input[@input_filename].push line 
+      @result.input[@the_name_of_the_file_being_read].push line
     end
 
     def set_output_file?(line)
