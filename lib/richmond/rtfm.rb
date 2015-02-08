@@ -97,7 +97,7 @@ module Richmond
     end
 
     def record! line
-      @result.output[@output_filename].push line 
+      @result.output[@output_filename].push line
       @result.input[@the_name_of_the_file_being_read].push line
     end
 
