@@ -61,7 +61,7 @@ module Richmond
         end
       end
       note "finished emitting files"
-      input.keys
+      #input.keys
     end
 
     private
