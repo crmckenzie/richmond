@@ -17,13 +17,10 @@ module Richmond
     end 
 
     def parse_output_file(line)
-      match = line.match output_file_pattern
-      smatch = match
+      line.match(output_file_pattern)
         .to_s
         .gsub(/output-file:/, '')
         .strip
-   
-      smatch
     end
 
     def scan(dir)
