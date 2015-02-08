@@ -25,7 +25,7 @@ module Richmond
 
     def scan(dir)
       logger.info "beginning scan"
-      files = Find.find(dir).to_a.reject!{|f| File.directory? f }
+      files = Find.find(dir).to_a.reject! { |f| File.directory? f }
       @output_filename = default_output_filename dir
       result = scan_files files
       logger.info "scan finished"
