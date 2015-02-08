@@ -10,75 +10,77 @@ module Richmond
     include Richmond::Logging
 
     def initialize 
-      @record_pattern =/^\=begin richmond/i 
+      @record_pattern      =/^\=begin richmond/i
       @output_file_pattern = /output-file:\s+.*\s*/i
-      @end_record_pattern = /^\=end/i
-      @mode = :paused
-    end 
+      @end_record_pattern  = /^\=end/i
+      @mode                = :paused
+    end
 
     def parse_output_file(line)
-      match = line.match output_file_pattern
-      smatch = match
+      line.match(output_file_pattern)
         .to_s
         .gsub(/output-file:/, '')
         .strip
-   
-      smatch
     end
 
     def scan(dir)
-      logger.info "beginning scan"
-      files = Find.find(dir).to_a.reject!{|f| File.directory? f }
-      @output_filename = default_output_filename dir
-      result = scan_files files
-      logger.info "scan finished"
+      note "beginning scan"
+      mark_where_the_output_file_will_be_for dir
+      result = scan_files all_of_the_files_in(dir)
+      note "scan finished"
       result
     end
 
     def scan_files(files)
-      logger.info "scanning files: default output filename=#{@output_filename}"
+      note "scanning files: default output filename=#{@output_filename}"
       @result = ScanResult.new
-
-      files.each do |file|
-        @input_filename = File.expand_path file
-        lines = File.readlines file
-        lines.each do |line|
-          stop_recording! line if stop_recording? line
-          record! line if recording?
-          start_recording! line if start_recording? line
-        end
-      end
-
+      files.each { |f| look_for_documentation_in f }
       @result
     end
 
     def emit(input)
-      logger.info "begin emitting files"
-      input.each_pair do |filename, lines|
-        assert_directory_exists filename
-        logger.info "writing #{filename}"
-        File.open(filename, 'w') do |file|
-          lines.each {|line| file.write line }
-        end
-      end
-      logger.info "finished emitting files"
-      input.keys
+      note "begin emitting files"
+      input.each_pair { |f, l| write_these_lines_to_a_file l, f }
+      note "finished emitting files"
+      #input.keys
     end
 
     private
-    
+
+    def look_for_documentation_in file
+      @the_name_of_the_file_being_read = File.expand_path file
+      File.readlines(file).each do |line|
+        begin
+          stop_recording! line if stop_recording? line
+          record! line if recording?
+          start_recording! line if start_recording? line
+        rescue
+          @mode = :paused 
+        end
+      end
+    end
+
+    def write_these_lines_to_a_file lines, file
+      assert_directory_exists file
+      note "writing #{file}"
+      File.open(file, 'w') { |f| lines.each { |l| f.write l } }
+    end
+
+    def all_of_the_files_in dir
+      Find.find(dir).to_a.reject! { |f| File.directory? f }
+    end
+
     def start_recording?(line)
       line.match record_pattern
     end
 
     def start_recording!(line)
       @mode = :recording 
-      logger.info "start recording"
-      
-      if set_output_file? line
-        @output_filename = parse_output_file line
-        logger.info "changing output file to #{@output_filename}"
-      end
+      note "start recording"
+
+      return unless set_output_file? line
+      @output_filename = parse_output_file line
+      note "changing output file to #{@output_filename}"
     end
 
     def stop_recording?(line)
@@ -86,8 +88,8 @@ module Richmond
     end
 
     def stop_recording!(line)
-      @mode = :paused 
-      logger.info "stop recording"
+      @mode = :paused
+      note "stop recording"
     end
 
     def recording?
@@ -95,8 +97,8 @@ module Richmond
     end
 
     def record! line
-      @result.output[@output_filename].push line 
-      @result.input[@input_filename].push line 
+      @result.output[@output_filename].push line
+      @result.input[@the_name_of_the_file_being_read].push line
     end
 
     def set_output_file?(line)
@@ -104,15 +106,20 @@ module Richmond
     end
 
     def assert_directory_exists(filename)
-      dirname = File.dirname(filename)
-      unless File.directory?(dirname)
-        FileUtils.mkdir_p(dirname)
-      end
+      #dirname = File.dirname(filename)
+      #unless File.directory?(dirname)
+        #FileUtils.mkdir_p(dirname)
+      #end
     end
 
     def default_output_filename(dir)
       File.join(dir,'output', 'richmond.output')
     end
 
+    def mark_where_the_output_file_will_be_for(dir)
+      @output_filename = default_output_filename dir
+    end
+
   end
+
 end

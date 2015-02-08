@@ -2,24 +2,24 @@ require_relative '../spec_helper'
 
 describe Richmond::RTFM do
 
-  let!(:dir) {
+  let!(:dir) do
     file = File.expand_path('../../', __FILE__)
-    dir = File.dirname(file)
-    dir
-  }
+    File.dirname file
+  end
 
-  subject {
-    Richmond::RTFM.new 
-  }
+  subject { Richmond::RTFM.new }
   
   describe '.parse_output_file' do
+
     it 'pulls the output-file out of the start line' do
       line = '=begin richmond output-file: output/testfile.output'
       expect(subject.parse_output_file line).to eq 'output/testfile.output'
     end
+
   end
 
   describe '.rtfm' do
+
     let! (:result) { subject.scan dir }
 
     describe 'simple comment block' do
@@ -47,9 +47,11 @@ this:
           lines = result.input[File.expand_path __FILE__]
           expect(lines.size).to eq 9 
         end
+
       end
 
       describe 'output' do
+
         it 'has default output filename' do
           default_filename = File.join(File.dirname(File.expand_path('../../', __FILE__)), 'output', 'richmond.output')
           expect(result.output).to have_key(default_filename) 
@@ -58,6 +60,7 @@ this:
           expect(lines.first).to eq "this:\n"
           expect(lines.last).to eq "  - array item 2\n" 
         end
+
       end
 
     end
@@ -103,30 +106,31 @@ this:
   should not change the test results for the richmond comment blocks
 =end
     end
+
   end
 
   describe '.emit' do
+
     let! (:input_result) { subject.scan dir }
 
     before(:each) do
       input_result.output.each_pair do |file, lines|
-        if File.exists? file
-          File.delete file
-        end
+        File.delete file if File.exists? file
       end
     end
 
     let!(:emit_result) { subject.emit input_result.output }
 
     describe 'files created' do
+
       it 'emit_result is not nil' do
         expect(emit_result).to_not be nil
       end
 
       it 'creates the output files' do
-        input_result.output.keys.each {|file|
+        input_result.output.keys.each do |file|
           expect(File.exists? file).to eq(true), file
-        }
+        end
       end
 
     end

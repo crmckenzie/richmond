@@ -1,7 +1,12 @@
 require 'logger'
 
 module Richmond
+
   module Logging
+
+    def note message
+      logger.info message
+    end
 
     class << self
      
@@ -33,5 +38,7 @@ module Richmond
     def logger
       Logging.logger
     end
+
   end
+
 end
