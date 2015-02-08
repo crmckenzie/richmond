@@ -24,16 +24,15 @@ module Richmond
     end
 
     def scan(dir)
-      logger.info "beginning scan"
-      files = Find.find(dir).to_a.reject! { |f| File.directory? f }
+      note "beginning scan"
       @output_filename = default_output_filename dir
-      result = scan_files files
-      logger.info "scan finished"
+      result = scan_files all_of_the_files_in(dir)
+      note "scan finished"
       result
     end
 
     def scan_files(files)
-      logger.info "scanning files: default output filename=#{@output_filename}"
+      note "scanning files: default output filename=#{@output_filename}"
       @result = ScanResult.new
 
       files.each do |file|
@@ -53,19 +52,27 @@ module Richmond
     end
 
     def emit(input)
-      logger.info "begin emitting files"
+      note "begin emitting files"
       input.each_pair do |filename, lines|
         assert_directory_exists filename
-        logger.info "writing #{filename}"
+        note "writing #{filename}"
         File.open(filename, 'w') do |file|
           lines.each {|line| file.write line }
         end
       end
-      logger.info "finished emitting files"
+      note "finished emitting files"
       input.keys
     end
 
     private
+
+    def all_of_the_files_in dir
+      Find.find(dir).to_a.reject! { |f| File.directory? f }
+    end
+
+    def note message
+      logger.info message
+    end
     
     def start_recording?(line)
       line.match record_pattern
@@ -73,11 +80,11 @@ module Richmond
 
     def start_recording!(line)
       @mode = :recording 
-      logger.info "start recording"
+      note "start recording"
       
       if set_output_file? line
         @output_filename = parse_output_file line
-        logger.info "changing output file to #{@output_filename}"
+        note "changing output file to #{@output_filename}"
       end
     end
 
@@ -87,7 +94,7 @@ module Richmond
 
     def stop_recording!(line)
       @mode = :paused 
-      logger.info "stop recording"
+      note "stop recording"
     end
 
     def recording?
