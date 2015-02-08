@@ -53,18 +53,18 @@ module Richmond
 
     def emit(input)
       note "begin emitting files"
-      input.each_pair do |filename, lines|
-        assert_directory_exists filename
-        note "writing #{filename}"
-        File.open(filename, 'w') do |file|
-          lines.each {|line| file.write line }
-        end
-      end
+      input.each_pair { |f, l| write_these_lines_to_a_file l, f }
       note "finished emitting files"
       #input.keys
     end
 
     private
+
+    def write_these_lines_to_a_file lines, file
+      assert_directory_exists file
+      note "writing #{file}"
+      File.open(file, 'w') { |f| lines.each { |l| f.write l } }
+    end
 
     def all_of_the_files_in dir
       Find.find(dir).to_a.reject! { |f| File.directory? f }
