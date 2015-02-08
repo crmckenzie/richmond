@@ -34,20 +34,7 @@ module Richmond
     def scan_files(files)
       note "scanning files: default output filename=#{@output_filename}"
       @result = ScanResult.new
-
-      files.each do |file|
-        @the_name_of_the_file_being_read = File.expand_path file
-        File.readlines(file).each do |line|
-          begin
-            stop_recording! line if stop_recording? line
-            record! line if recording?
-            start_recording! line if start_recording? line
-          rescue
-            @mode = :paused 
-          end
-        end
-      end
-
+      files.each { |f| look_for_documentation_in f }
       @result
     end
 
@@ -59,6 +46,19 @@ module Richmond
     end
 
     private
+
+    def look_for_documentation_in file
+      @the_name_of_the_file_being_read = File.expand_path file
+      File.readlines(file).each do |line|
+        begin
+          stop_recording! line if stop_recording? line
+          record! line if recording?
+          start_recording! line if start_recording? line
+        rescue
+          @mode = :paused 
+        end
+      end
+    end
 
     def write_these_lines_to_a_file lines, file
       assert_directory_exists file
