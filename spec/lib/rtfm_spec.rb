@@ -115,9 +115,7 @@ this:
 
     before(:each) do
       input_result.output.each_pair do |file, lines|
-        if File.exists? file
-          File.delete file
-        end
+        File.delete file if File.exists? file
       end
     end
 
