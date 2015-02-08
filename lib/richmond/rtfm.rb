@@ -104,10 +104,10 @@ module Richmond
     end
 
     def assert_directory_exists(filename)
-      dirname = File.dirname(filename)
-      unless File.directory?(dirname)
-        FileUtils.mkdir_p(dirname)
-      end
+      #dirname = File.dirname(filename)
+      #unless File.directory?(dirname)
+        #FileUtils.mkdir_p(dirname)
+      #end
     end
 
     def default_output_filename(dir)
