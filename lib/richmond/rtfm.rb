@@ -26,7 +26,9 @@ module Richmond
     def scan(dir)
       note "beginning scan"
       mark_where_the_output_file_will_be_for dir
-      scan_files(all_of_the_files_in(dir)).tap { note "scan finished" }
+      result = scan_files all_of_the_files_in(dir)
+      note "scan finished"
+      result
     end
 
     def scan_files(files)
