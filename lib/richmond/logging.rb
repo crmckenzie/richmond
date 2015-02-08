@@ -28,6 +28,10 @@ module Richmond
         def logger
           Logging.logger
         end
+
+        def note message
+          logger.info message
+        end
       end
     end
 

@@ -71,10 +71,6 @@ module Richmond
       Find.find(dir).to_a.reject! { |f| File.directory? f }
     end
 
-    def note message
-      logger.info message
-    end
-    
     def start_recording?(line)
       line.match record_pattern
     end
