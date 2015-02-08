@@ -1,4 +1,5 @@
 class ScanResult
+
   attr_accessor :input, :output
 
   def initialize
