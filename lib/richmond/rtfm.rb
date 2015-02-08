@@ -44,6 +44,7 @@ module Richmond
             record! line if recording?
             start_recording! line if start_recording? line
           rescue
+            @mode = :paused 
           end
         end
       end
