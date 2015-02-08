@@ -10,10 +10,10 @@ module Richmond
     include Richmond::Logging
 
     def initialize 
-      @record_pattern =/^\=begin richmond/i 
+      @record_pattern      =/^\=begin richmond/i 
       @output_file_pattern = /output-file:\s+.*\s*/i
-      @end_record_pattern = /^\=end/i
-      @mode = :paused
+      @end_record_pattern  = /^\=end/i
+      @mode                = :paused
     end 
 
     def parse_output_file(line)
