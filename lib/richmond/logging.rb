@@ -4,6 +4,10 @@ module Richmond
 
   module Logging
 
+    def note message
+      logger.info message
+    end
+
     class << self
      
       def logger
@@ -27,10 +31,6 @@ module Richmond
       class << base
         def logger
           Logging.logger
-        end
-
-        def note message
-          logger.info message
         end
       end
     end

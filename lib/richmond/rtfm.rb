@@ -79,10 +79,9 @@ module Richmond
       @mode = :recording 
       note "start recording"
       
-      if set_output_file? line
-        @output_filename = parse_output_file line
-        note "changing output file to #{@output_filename}"
-      end
+      return unless set_output_file? line
+      @output_filename = parse_output_file line
+      note "changing output file to #{@output_filename}"
     end
 
     def stop_recording?(line)
