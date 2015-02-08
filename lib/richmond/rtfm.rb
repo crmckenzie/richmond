@@ -88,7 +88,7 @@ module Richmond
     end
 
     def stop_recording!(line)
-      @mode = :paused 
+      @mode = :paused
       note "stop recording"
     end
 
