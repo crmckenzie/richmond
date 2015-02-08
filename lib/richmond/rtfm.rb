@@ -25,7 +25,7 @@ module Richmond
 
     def scan(dir)
       note "beginning scan"
-      @output_filename = default_output_filename dir
+      mark_where_the_output_file_will_be_for dir
       scan_files(all_of_the_files_in(dir)).tap { note "scan finished" }
     end
 
@@ -112,6 +112,10 @@ module Richmond
 
     def default_output_filename(dir)
       File.join(dir,'output', 'richmond.output')
+    end
+
+    def mark_where_the_output_file_will_be_for(dir)
+      @output_filename = default_output_filename dir
     end
 
   end
