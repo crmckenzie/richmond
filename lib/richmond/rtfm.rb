@@ -43,9 +43,12 @@ module Richmond
         @input_filename = File.expand_path file
         lines = File.readlines file
         lines.each do |line|
-          stop_recording! line if stop_recording? line
-          record! line if recording?
-          start_recording! line if start_recording? line
+          begin
+            stop_recording! line if stop_recording? line
+            record! line if recording?
+            start_recording! line if start_recording? line
+          rescue
+          end
         end
       end
 
