@@ -6,17 +6,11 @@ module Richmond
     class << self
      
       def logger
-        @logger ||= Logger.new logging_target 
+        @logger ||= Logger.new $stdout 
       end
 
       def logger=(value)
         @logger = value
-      end
-
-      private
-
-      def logging_target
-        @logging_target ||= $stdout 
       end
 
     end
