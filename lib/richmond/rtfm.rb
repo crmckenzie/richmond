@@ -10,10 +10,10 @@ module Richmond
     include Richmond::Logging
 
     def initialize 
-      @record_pattern =/^\=begin.*(output-file:\s+.*|append)/i 
+      @record_pattern      =/^\=begin.*(output-file:\s+.*|append)/i 
       @output_file_pattern = /output-file:\s+.*\s*/i
-      @end_record_pattern = /^\=end/i
-      @mode = :paused
+      @end_record_pattern  = /^\=end/i
+      @mode                = :paused
     end 
 
     def parse_output_file(line)
@@ -28,8 +28,7 @@ module Richmond
 
     def scan(dir)
       logger.info "beginning scan"
-      files = Find.find(dir).to_a.reject!{|f| File.directory? f }
-      result = scan_files files
+      result = scan_files Richmond.find_files_in_dir dir
       logger.info "scan finished"
       result
     end
@@ -43,12 +42,16 @@ module Richmond
         @output_filename = default_output_filename dir
         
         lines = File.readlines file
-        lines.each do |line|
+        lines.each_with_index do |line, i|
           line.encode!('UTF-8', 'UTF-8', :invalid => :replace)
-          end_recording! line if end_recording? line
-          record! line if recording?
-          begin_recording! line if begin_recording? line
-        end
+          #begin
+            end_recording! line if end_recording? line
+            record! line if recording?
+            begin_recording! line if begin_recording? line
+          #rescue Exception => error 
+           # logger.debug "error recording line: #{file}: line: #{i}: #{line} => #{error}"
+          #end
+          end
       end
 
       @result
