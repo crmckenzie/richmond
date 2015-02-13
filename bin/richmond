@@ -1,0 +1,6 @@
+require_relative '../lib/richmond.rb'
+dir = ARGV[0]
+
+puts "scanning directory #{dir} for files"
+Richmond.generate dir
+

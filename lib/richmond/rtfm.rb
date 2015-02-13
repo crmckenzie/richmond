@@ -10,10 +10,10 @@ module Richmond
     include Richmond::Logging
 
     def initialize 
-      @record_pattern =/^\=begin richmond/i 
+      @record_pattern      =/^\=begin.*(output-file:\s+.*|append)/i 
       @output_file_pattern = /output-file:\s+.*\s*/i
-      @end_record_pattern = /^\=end/i
-      @mode = :paused
+      @end_record_pattern  = /^\=end/i
+      @mode                = :paused
     end 
 
     def parse_output_file(line)
@@ -22,31 +22,36 @@ module Richmond
         .to_s
         .gsub(/output-file:/, '')
         .strip
-   
-      smatch
+
+      File.expand_path smatch
     end
 
     def scan(dir)
       logger.info "beginning scan"
-      files = Find.find(dir).to_a.reject!{|f| File.directory? f }
-      @output_filename = default_output_filename dir
-      result = scan_files files
+      result = scan_files Richmond.find_files_in_dir dir
       logger.info "scan finished"
       result
     end
 
     def scan_files(files)
-      logger.info "scanning files: default output filename=#{@output_filename}"
       @result = ScanResult.new
 
       files.each do |file|
+        dir = File.dirname file
         @input_filename = File.expand_path file
+        @output_filename = default_output_filename dir
+        
         lines = File.readlines file
-        lines.each do |line|
-          stop_recording! line if stop_recording? line
-          record! line if recording?
-          start_recording! line if start_recording? line
-        end
+        lines.each_with_index do |line, i|
+          line.encode!('UTF-8', 'UTF-8', :invalid => :replace)
+          #begin
+            end_recording! line if end_recording? line
+            record! line if recording?
+            begin_recording! line if begin_recording? line
+          #rescue Exception => error 
+           # logger.debug "error recording line: #{file}: line: #{i}: #{line} => #{error}"
+          #end
+          end
       end
 
       @result
@@ -64,30 +69,32 @@ module Richmond
       logger.info "finished emitting files"
       input.keys
     end
-
-    private
     
-    def start_recording?(line)
-      line.match record_pattern
+    def begin_recording?(line)
+      return false if line.nil?
+      return true if line.match record_pattern
+      false
     end
-
-    def start_recording!(line)
-      @mode = :recording 
-      logger.info "start recording"
-      
-      if set_output_file? line
-        @output_filename = parse_output_file line
-        logger.info "changing output file to #{@output_filename}"
-      end
-    end
-
-    def stop_recording?(line)
+    
+    def end_recording?(line)
       line.match end_record_pattern
     end
 
-    def stop_recording!(line)
+    private
+
+    def begin_recording!(line)
+      @mode = :recording 
+      
+      if set_output_file? line
+        @output_filename = parse_output_file line
+      end
+      logger.debug "---#{line}"
+      logger.info "---begin recording into #{@output_filename} from #{@input_filename}"
+    end
+
+    def end_recording!(line)
       @mode = :paused 
-      logger.info "stop recording"
+      logger.info "---end recording"
     end
 
     def recording?
