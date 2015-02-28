@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Richmond::VERSION
   spec.authors       = ["crmckenzie"]
   spec.email         = ["crmckenzie@gmail.com"]
-  spec.summary       = %q{scrap files for content and emit an aggregate file}
-  spec.homepage      = ""
+  spec.summary       = %q{scrape files for content and emit an aggregate file}
+  spec.homepage      = "http://github.com/crmckenzie/richmond"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
