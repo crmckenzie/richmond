@@ -55,12 +55,12 @@ describe Richmond::ScanSettings do
       Richmond.reset_filters
     end
 
-    it 'requires the richmond file' do
+    it 'loads the richmond file' do
       file = File.expand_path File.join('.', '.richmond')
       expect(File).to receive(:exists?).with(file)
         .and_return(true)
       
-      expect(Kernel).to receive(:require).with(file)
+      expect(Kernel).to receive(:load).with(file)
         .and_return true
 
       Richmond::ScanSettings.new '.'
