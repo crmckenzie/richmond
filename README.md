@@ -75,6 +75,18 @@ in it's processing.
       file.match /\.rb$/
     end
 
+# Release Notes
+
+## 0.3.0
+
+* Richmond was failing on binary files. Richmond can now be configured to ignore
+  or target specific files or directories via a .richmond file found in the root
+  of the directory being processed.
+
+## 0.2.0
+
+Initial public beta release
+
 ## Contributing
 
 1. Fork it ( https://github.com/crmckenzie/richmond/fork )
