@@ -26,9 +26,9 @@ module Richmond
       File.expand_path smatch
     end
 
-    def scan(dir)
+    def scan(scan_settings)
       logger.info "beginning scan"
-      result = scan_files Richmond.find_files_in_dir dir
+      result = scan_files scan_settings.files 
       logger.info "scan finished"
       result
     end
@@ -43,14 +43,14 @@ module Richmond
         
         lines = File.readlines file
         lines.each_with_index do |line, i|
-          line.encode!('UTF-8', 'UTF-8', :invalid => :replace)
-          #begin
+          #line.encode!('UTF-8', 'UTF-8', :invalid => :replace)
+          begin
             end_recording! line if end_recording? line
             record! line if recording?
             begin_recording! line if begin_recording? line
-          #rescue Exception => error 
-           # logger.debug "error recording line: #{file}: line: #{i}: #{line} => #{error}"
-          #end
+          rescue Exception => error 
+            logger.debug "error recording line: #{file}: line: #{i}: #{line} => #{error}"
+          end
           end
       end
 

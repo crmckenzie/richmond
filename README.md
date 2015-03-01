@@ -57,6 +57,36 @@ Successive blocks targeting the same output file can be written as follows:
 
 Richmond will take any text in the block and insert it into the specified output file.
 
+# Configuration
+
+Richmond will look for a file called .richmond in the root directory you are running against.
+If it finds the .richmond file, it will load it.
+
+You can use the select or reject methods to change which files Richmond will include or exlude
+in it's processing.
+
+    # Richmond doesn't like binary files
+    Richmond.reject do |file|
+      file.match /images/
+    end
+
+    # I only want to parse .rb files
+    Richmond.select do |file|
+      file.match /\.rb$/
+    end
+
+# Release Notes
+
+## 0.3.0
+
+* Richmond was failing on binary files. Richmond can now be configured to ignore
+  or target specific files or directories via a .richmond file found in the root
+  of the directory being processed.
+
+## 0.2.0
+
+Initial public beta release
+
 ## Contributing
 
 1. Fork it ( https://github.com/crmckenzie/richmond/fork )
