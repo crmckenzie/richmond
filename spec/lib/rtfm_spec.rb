@@ -45,7 +45,10 @@ describe Richmond::RTFM do
   end
 
   describe '.rtfm' do
-    let!(:result) { subject.scan dir }
+    let!(:result) { 
+      settings = Richmond::ScanSettings.new dir
+      return subject.scan settings 
+    }
 
     describe 'simple comment block' do
 
@@ -130,7 +133,10 @@ this:
   end
 
   describe '.emit' do
-    let!(:input_result) { subject.scan dir }
+    let!(:input_result) { 
+      settings = Richmond::ScanSettings.new dir
+       return subject.scan settings 
+    }
 
     before(:each) do
       input_result.output.each_pair do |file, lines|
